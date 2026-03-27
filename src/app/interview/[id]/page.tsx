@@ -54,9 +54,14 @@ export default function InterviewPage() {
       const data = await res.json();
       
       if (data.success) {
-        setMessages(prev => [...prev, data.message]);
+        const updatedMessages = [...messages, userMessage, data.message];
+        setMessages(updatedMessages);
         if (data.isComplete) {
           setInterviewComplete(true);
+          // Persist transcript for the Dashboard
+          if (typeof window !== "undefined") {
+            window.localStorage.setItem('candidateTranscript', JSON.stringify(updatedMessages));
+          }
         }
       }
     } catch (e) {

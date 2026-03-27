@@ -46,7 +46,8 @@ export async function POST(req: Request) {
       
       const completion = await openai.chat.completions.create({
         model: "meta-llama/Meta-Llama-3.1-70B-Instruct",
-        messages: [{ role: "user", content: prompt }]
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 1000,
       });
       console.log("Featherless AI Discovery Analysis:", completion.choices[0]?.message?.content);
     } else {
@@ -60,8 +61,8 @@ export async function POST(req: Request) {
       candidateId,
       message: "Candidate signals analyzed successfully."
     });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ success: false, error: "Failed to process signals" }, { status: 500 });
+  } catch (error: any) {
+    console.error("API Route Error:", error);
+    return NextResponse.json({ success: false, error: error.message || "Failed to process signals" }, { status: 500 });
   }
 }

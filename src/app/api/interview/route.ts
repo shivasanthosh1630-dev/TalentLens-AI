@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { messages } = body;
-    const isFinishing = messages.length >= 5;
+    const isFinishing = messages.length >= 8;
     
     let aiResponse = "";
     
@@ -30,7 +30,8 @@ export async function POST(req: Request) {
 
       const completion = await openai.chat.completions.create({
         model: "meta-llama/Meta-Llama-3.1-70B-Instruct",
-        messages: [systemMessage, ...formattedMessages]
+        messages: [systemMessage, ...formattedMessages],
+        max_tokens: 1000,
       });
       
       aiResponse = completion.choices[0]?.message?.content || "Could you elaborate further on that?";
@@ -54,8 +55,8 @@ export async function POST(req: Request) {
       },
       isComplete: isFinishing
     });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ success: false, error: "Failed to process interview response" }, { status: 500 });
+  } catch (error: any) {
+    console.error("API Route Error:", error);
+    return NextResponse.json({ success: false, error: error.message || "Failed to process interview response" }, { status: 500 });
   }
 }

@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 // Types
 type Insight = { label: string; value: string; desc: string; };
@@ -23,14 +23,30 @@ export default function DashboardPage() {
   const candidateId = params.id as string;
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+    
     const fetchDecision = async () => {
       try {
-        const res = await fetch(`/api/decision?id=${candidateId}`);
+        let transcript = [];
+        if (typeof window !== "undefined") {
+          const locallySaved = window.localStorage.getItem('candidateTranscript');
+          if (locallySaved) transcript = JSON.parse(locallySaved);
+        }
+
+        const res = await fetch(`/api/decision?id=${candidateId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript })
+        });
         const result = await res.json();
         if (result.success) {
           setData(result.data);
+        } else {
+          console.error(result.error);
         }
       } catch (error) {
         console.error("Failed to load dashboard data");

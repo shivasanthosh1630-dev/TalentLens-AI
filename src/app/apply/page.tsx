@@ -23,6 +23,7 @@ export default function ApplyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return; // Defend against double clicks/enter key spam
     setIsSubmitting(true);
     
     try {
@@ -35,12 +36,12 @@ export default function ApplyPage() {
       if (data.success) {
         router.push(`/interview/${data.candidateId}`);
       } else {
-        alert('Failed to process application.');
+        alert('Failed to process application: ' + (data.error || 'Unknown error. Check terminal.'));
         setIsSubmitting(false);
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
-      alert('Error occurred.');
+      alert('Network Error: ' + e.message);
       setIsSubmitting(false);
     }
   };
