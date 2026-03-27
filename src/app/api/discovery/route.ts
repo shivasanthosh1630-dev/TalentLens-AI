@@ -56,9 +56,17 @@ export async function POST(req: Request) {
     
     const candidateId = "cand_" + Math.random().toString(36).substring(2, 9);
     
+    const profileSummary = `
+      GitHub: ${data.github}
+      LinkedIn: ${data.linkedin}
+      Achievements: ${data.achievements}
+      Bright Data Enriched Git Signals: ${enrichedData}
+    `;
+    
     return NextResponse.json({
       success: true,
       candidateId,
+      profile: profileSummary,
       message: "Candidate signals analyzed successfully."
     });
   } catch (error: any) {

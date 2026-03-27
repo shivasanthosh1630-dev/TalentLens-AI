@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     const { searchParams } = new URL(req.url);
     const candidateId = searchParams.get('id');
     const body = await req.json();
-    const { transcript } = body;
+    const { transcript, profile } = body;
 
     if (!candidateId) {
       return NextResponse.json({ success: false, error: "Missing candidate ID" }, { status: 400 });
@@ -23,12 +23,15 @@ export async function POST(req: Request) {
       
     const basePrompt = `
       You are an elite multi-agent AI hiring committee evaluating a candidate for a Senior Software Engineer position.
-      Below is the candidate's actual interview transcript.
+      Below is the candidate's active Git/Portfolio profile signals AND their actual interview transcript.
       
-      Transcript:
+      [CANDIDATE BASE PROFILE & GITHUB SIGNALS]
+      ${profile || 'Not provided.'}
+
+      [INTERVIEW TRANSCRIPT]
       ${conversationStr}
       
-      You must evaluate the candidate's answers deeply. Note where they show insight, and where they gave generic or weak answers.
+      You must evaluate the candidate's answers and their profile signals deeply. Note where they show insight, and where they gave generic or weak answers.
       Respond with ONLY a valid JSON object matching this exact shape (no markdown, no backticks, just raw JSON):
       {
         "score": <number 0-100 reflecting their true performance based on transcript depth>,
