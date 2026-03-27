@@ -23,9 +23,8 @@ export default function ApplyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSubmitting) return; // Defend against double clicks/enter key spam
     setIsSubmitting(true);
-    
+
     try {
       const res = await fetch('/api/discovery', {
         method: 'POST',

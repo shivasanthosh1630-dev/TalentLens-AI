@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 // Types
 type Insight = { label: string; value: string; desc: string; };
@@ -10,7 +10,7 @@ type Agent = { role: string; name: string; verdict: string; color: string; reaso
 type DashboardData = { score: number; decision: string; insights: Insight[]; agents: Agent[]; };
 
 const getAgentStyles = (color: string) => {
-  switch(color) {
+  switch (color) {
     case 'blue': return { bgLight: 'bg-blue-500/10 hover:bg-blue-500/20', text: 'text-blue-400', bg: 'bg-blue-500', shadow: 'shadow-blue-500/20', border: 'border-blue-500/20' };
     case 'purple': return { bgLight: 'bg-purple-500/10 hover:bg-purple-500/20', text: 'text-purple-400', bg: 'bg-purple-500', shadow: 'shadow-purple-500/20', border: 'border-purple-500/20' };
     case 'amber': return { bgLight: 'bg-amber-500/10 hover:bg-amber-500/20', text: 'text-amber-400', bg: 'bg-amber-500', shadow: 'shadow-amber-500/20', border: 'border-amber-500/20' };
@@ -23,12 +23,8 @@ export default function DashboardPage() {
   const candidateId = params.id as string;
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
-  const hasFetched = useRef(false);
 
   useEffect(() => {
-    if (hasFetched.current) return;
-    hasFetched.current = true;
-    
     const fetchDecision = async () => {
       try {
         let transcript = [];
@@ -54,7 +50,7 @@ export default function DashboardPage() {
         setLoading(false);
       }
     };
-    
+
     fetchDecision();
   }, [candidateId]);
 
@@ -84,7 +80,7 @@ export default function DashboardPage() {
           </div>
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">Panel <span className="text-gradient">Decision</span></h1>
         </div>
-        
+
         <div className="flex items-center gap-6 glass-card px-8 py-5 rounded-3xl backdrop-blur-3xl shadow-[0_0_50px_rgba(59,130,246,0.15)]">
           <div className="text-center">
             <p className="text-sm text-slate-400 uppercase tracking-widest font-semibold mb-1">Score</p>
@@ -115,14 +111,14 @@ export default function DashboardPage() {
         Multi-Agent Evaluation
         <span className="text-xs font-bold tracking-widest uppercase text-purple-400 bg-purple-500/20 border border-purple-500/20 px-3 py-1 rounded-full">Simulated Panel</span>
       </h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
         {data.agents.map((agent, i) => {
           const styles = getAgentStyles(agent.color);
           return (
             <div key={i} className="glass-card rounded-3xl p-6 md:p-8 flex flex-col h-full border-t border-t-white/10 relative overflow-hidden group">
               <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-10 -mt-10 transition-colors duration-500 ${styles.bgLight}`}></div>
-              
+
               <div className="flex items-center gap-4 mb-6 relative z-10">
                 <div className={`w-14 h-14 rounded-2xl ${styles.bg} flex items-center justify-center shadow-lg ${styles.shadow} text-white font-black text-xl border ${styles.border}`}>
                   {agent.name.split(' ')[1].charAt(0)}
@@ -132,13 +128,13 @@ export default function DashboardPage() {
                   <p className={`text-xs uppercase tracking-widest ${styles.text} font-bold mt-1`}>{agent.role}</p>
                 </div>
               </div>
-              
+
               <div className="mb-6 relative z-10">
                 <span className={`inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border ${styles.bgLight} ${styles.text} ${styles.border}`}>
                   {agent.verdict}
                 </span>
               </div>
-              
+
               <div className="flex-1 relative z-10">
                 <p className="text-slate-300 leading-relaxed text-[15px] font-medium opacity-90">"{agent.reasoning}"</p>
               </div>
@@ -146,7 +142,7 @@ export default function DashboardPage() {
           );
         })}
       </div>
-      
+
       <div className="mt-20 text-center relative z-10 border-t border-white/5 pt-10">
         <Link href="/" className="inline-flex px-10 py-4 rounded-full bg-white/5 hover:bg-white/10 text-white font-bold transition-all border border-white/10 hover:border-white/20 hover:scale-105">
           Start New Evaluation
